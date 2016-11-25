@@ -1,0 +1,5 @@
+bin/**
+obj/**
+Scripts/**
+Threadily.KnockoutBridge.j*
+Threadily.KnockoutBridge.d.ts

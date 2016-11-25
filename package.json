@@ -1,0 +1,9 @@
+{
+  "name": "threadily-knockout-bridge",
+  "version": "1.0.0",
+  "description": "Helps bridge the Threadily library with Knockout to a better UI writing experience.",
+  "main": "Threadily.KnockoutBridge.js",
+  "author": {
+    "name": "Ricky Patel"
+  }
+}
