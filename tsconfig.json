@@ -1,0 +1,11 @@
+﻿{
+  "compilerOptions": {
+    "module": "amd",
+    "target": "ES6",
+    "allowJs": false,
+    "declaration": true
+  },
+  "files": [
+    "threadily.knockoutBridge.ts"
+  ]
+}
