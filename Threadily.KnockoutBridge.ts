@@ -38,7 +38,8 @@ export class ThreadilyKnockoutBridge
             // only if it is a ThreadObject, store a reference so we can make service calls on it
             var data = threadilyProperty.get();
             if (threadilyProperty.getThreadId != null) {
-                self[koObjectName + "ThreadObject"] = threadilyModule.IThreadObject.getReference(threadilyProperty);
+                threadilyProperty = threadilyModule.IThreadObject.getReference(threadilyProperty);
+                self[koObjectName + "ThreadObject"] = threadilyProperty;
                 data = self[koObjectName + "ThreadObject"].get();
             }
             if (koViewModel != null) {
@@ -59,7 +60,8 @@ export class ThreadilyKnockoutBridge
                         self[koObjectName + "ThreadObject"].delete();
                     }
                     if (newValue != null) {
-                        self[koObjectName + "ThreadObject"] = threadilyModule.IThreadObject.getReference(newValue);
+                        newValue = threadilyModule.IThreadObject.getReference(newValue);
+                        self[koObjectName + "ThreadObject"] = newValue;
                         newValue = self[koObjectName + "ThreadObject"];
                     }
                 }
