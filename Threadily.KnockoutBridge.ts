@@ -56,7 +56,7 @@ export class ThreadilyKnockoutBridge
                 // only if it is a ThreadObject, store a reference so we can make service calls on it
                 if (newValue.getThreadId != null) {
                     if (self[koObjectName + "ThreadObject"] != null) {
-                        //self[koObjectName + "ThreadObject"].delete();
+                        self[koObjectName + "ThreadObject"].delete();
                     }
                     if (newValue != null) {
                         self[koObjectName + "ThreadObject"] = threadilyModule.IThreadObject.getReference(newValue);
@@ -135,13 +135,18 @@ export class ThreadilyKnockoutBridge
                     if (value.getThreadId != null) {
                         var removed = self[koArrayName + "ThreadObjects"][index];
                         self[koArrayName + "ThreadObjects"].splice(index, 1);
-                        //removed.delete();
+                        removed.delete();
                     }
                     koArray.splice(index, 1);
                 }
                 else if (action == threadilyModule.ObservableActionType.Set) {
                     // only if it is a ThreadObject, store a reference so we can make service calls on it
                     if (value.getThreadId != null) {
+                        // Remove the old one
+                        var removed = self[koArrayName + "ThreadObjects"][index];
+                        self[koArrayName + "ThreadObjects"].splice(index, 1);
+                        removed.delete();
+                        // Create the new one and add it
                         value = threadilyModule.IThreadObject.getReference(value);
                         self[koArrayName + "ThreadObjects"].splice(index, 0, value);
                     }
