@@ -16,7 +16,7 @@ export class ThreadilyKnockoutBridge
      * @param decorator Optional: Function to run anytime a new value comes in
      * @return A knockout subscription
      */
-    public static initAndLinkKnockoutObservableToThreadilyObject(threadilyModule: any, koModule: any, self: any, threadilyProperty: any, threadilyTypeName: string, koObjectName: string, koViewModel: (threadilyModule: any, koModule: any, viewModel: any) => void, decorator: (newValue: any) => any)
+    public static initAndLinkKnockoutObservableToThreadilyObject(threadilyModule: any, koModule: any, self: any, threadilyProperty: any, threadilyTypeName: string, koObjectName: string, koViewModel: (threadilyModule: any, koModule: any, viewModel: any) => Object, decorator: (newValue: any) => any)
     {
         var requiredArguments = ["threadilyModule", "koModule", "self", "threadilyProperty", "threadilyTypeName", "koObjectName"];
         for (var i = 0; i < requiredArguments.length; i++) {
@@ -38,11 +38,11 @@ export class ThreadilyKnockoutBridge
             // only if it is a ThreadObject, store a reference so we can make service calls on it
             var data = threadilyProperty.get();
             if (threadilyProperty.getThreadId != null) {
-                self[koObjectName + "ThreadObject"] = threadilyModule.ThreadObject.getReference(threadilyProperty);
+                self[koObjectName + "ThreadObject"] = threadilyModule.IThreadObject.getReference(threadilyProperty);
                 data = self[koObjectName + "ThreadObject"].get();
             }
             if (koViewModel != null) {
-                self[koObjectName] = koModule.observable(new koViewModel(threadilyModule, koModule, decorator(data)));
+                self[koObjectName] = koModule.observable(koViewModel(threadilyModule, koModule, decorator(data)));
             }
             else {
                 self[koObjectName] = koModule.observable(decorator(data));
@@ -56,16 +56,16 @@ export class ThreadilyKnockoutBridge
                 // only if it is a ThreadObject, store a reference so we can make service calls on it
                 if (newValue.getThreadId != null) {
                     if (self[koObjectName + "ThreadObject"] != null) {
-                        self[koObjectName + "ThreadObject"].delete();
+                        //self[koObjectName + "ThreadObject"].delete();
                     }
                     if (newValue != null) {
-                        self[koObjectName + "ThreadObject"] = threadilyModule.ThreadObject.getReference(newValue);
+                        self[koObjectName + "ThreadObject"] = threadilyModule.IThreadObject.getReference(newValue);
                         newValue = self[koObjectName + "ThreadObject"];
                     }
                 }
                 // now set the value
                 if (koViewModel != null) {
-                    self[koObjectName](new koViewModel(threadilyModule, koModule, decorator(newValue)));
+                    self[koObjectName](koViewModel(threadilyModule, koModule, decorator(newValue)));
                 }
                 else {
                     self[koObjectName](decorator(newValue));
@@ -86,7 +86,7 @@ export class ThreadilyKnockoutBridge
      * @param koViewModel Optional: The constructor to be called when the value is set to a new object. Should only needed for complex types.
      * @return A knockout subscription
      */
-    public static initAndLinkKnockoutArrayToThreadilyVector(threadilyModule, koModule, self, threadilyVector, threadilyVectorTypeName, koArrayName, koViewModel) {
+    public static initAndLinkKnockoutArrayToThreadilyVector(threadilyModule: any, koModule: any, self: any, threadilyVector: any, threadilyVectorTypeName: string, koArrayName: string, koViewModel: (threadilyModule: any, koModule: any, viewModel: any) => Object) {
         var requiredArguments = ["threadilyModule", "koModule", "self", "threadilyVector", "threadilyVectorTypeName", "koArrayName"];
         for (var i = 0; i < requiredArguments.length; i++) {
             if (arguments[i] == null) {
@@ -104,11 +104,11 @@ export class ThreadilyKnockoutBridge
             var iObject = threadilyVector.at(i);
             // only if it is a ThreadObject, store a reference so we can make service calls on it
             if (iObject.getThreadId != null) {
-                iObject = threadilyModule.ThreadObject.getReference(iObject)
+                iObject = threadilyModule.IThreadObject.getReference(iObject)
                 self[koArrayName + "ThreadObjects"].push(iObject);
             }
             if (koViewModel != null) {
-                koArray.push(new koViewModel(threadilyModule, koModule, iObject));
+                koArray.push(koViewModel(threadilyModule, koModule, iObject));
             }
             else {
                 koArray.push(iObject);
@@ -121,11 +121,11 @@ export class ThreadilyKnockoutBridge
                 if (action == threadilyModule.ObservableActionType.Insert) {
                     // only if it is a ThreadObject, store a reference so we can make service calls on it
                     if (value.getThreadId != null) {
-                        value = threadilyModule.ThreadObject.getReference(value);
+                        value = threadilyModule.IThreadObject.getReference(value);
                         self[koArrayName + "ThreadObjects"].splice(index, 0, value);
                     }
                     if (koViewModel != null) {
-                        koArray.splice(index, 0, new koViewModel(threadilyModule, koModule, value));
+                        koArray.splice(index, 0, koViewModel(threadilyModule, koModule, value));
                     }
                     else {
                         koArray.splice(index, 0, value);
@@ -135,9 +135,22 @@ export class ThreadilyKnockoutBridge
                     if (value.getThreadId != null) {
                         var removed = self[koArrayName + "ThreadObjects"][index];
                         self[koArrayName + "ThreadObjects"].splice(index, 1);
-                        removed.delete();
+                        //removed.delete();
                     }
                     koArray.splice(index, 1);
+                }
+                else if (action == threadilyModule.ObservableActionType.Set) {
+                    // only if it is a ThreadObject, store a reference so we can make service calls on it
+                    if (value.getThreadId != null) {
+                        value = threadilyModule.IThreadObject.getReference(value);
+                        self[koArrayName + "ThreadObjects"].splice(index, 0, value);
+                    }
+                    if (koViewModel != null) {
+                        koArray.splice(index, 1, koViewModel(threadilyModule, koModule, value));
+                    }
+                    else {
+                        koArray.splice(index, 1, value);
+                    }
                 }
                 else {
                     throw new Error('Not implemented');
