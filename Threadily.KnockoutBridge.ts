@@ -12,11 +12,11 @@ export class ThreadilyKnockoutBridge
      * @param threadilyProperty The threadily property to be subscribed to
      * @param threadilyTypeName The type of the threadily property to be subscribed to
      * @param koObjectName The name that the knockout observable will be called
-     * @param koViewModel Optional: The constructor to be called when the value is set to a new object. Should only needed for complex types.
+     * @param koViewModelFactory Optional: The constructor to be called when the value is set to a new object. Should only needed for complex types.
      * @param decorator Optional: Function to run anytime a new value comes in
      * @return A knockout subscription
      */
-    public static initAndLinkKnockoutObservableToThreadilyObject(threadilyModule: any, koModule: any, self: any, threadilyProperty: any, threadilyTypeName: string, koObjectName: string, koViewModel: (threadilyModule: any, koModule: any, viewModel: any) => void, decorator: (newValue: any) => any)
+    public static initAndLinkKnockoutObservableToThreadilyObject(threadilyModule: any, koModule: any, self: any, threadilyProperty: any, threadilyTypeName: string, koObjectName: string, koViewModelFactory: (threadilyModule: any, koModule: any, viewModel: any) => void, decorator: (newValue: any) => any)
     {
         var requiredArguments = ["threadilyModule", "koModule", "self", "threadilyProperty", "threadilyTypeName", "koObjectName"];
         for (var i = 0; i < requiredArguments.length; i++) {
@@ -41,8 +41,8 @@ export class ThreadilyKnockoutBridge
                 data = threadilyProperty.clone();
                 self[koObjectName + "ThreadObject"] = data;
             }
-            if (koViewModel != null) {
-                self[koObjectName] = koModule.observable(new koViewModel(threadilyModule, koModule, decorator(data)));
+            if (koViewModelFactory != null) {
+                self[koObjectName] = koModule.observable(koViewModelFactory(threadilyModule, koModule, decorator(data)));
             }
             else {
                 self[koObjectName] = koModule.observable(decorator(data));
@@ -64,8 +64,8 @@ export class ThreadilyKnockoutBridge
                     }
                 }
                 // now set the value
-                if (koViewModel != null) {
-                    self[koObjectName](new koViewModel(threadilyModule, koModule, decorator(newValue)));
+                if (koViewModelFactory != null) {
+                    self[koObjectName](koViewModelFactory(threadilyModule, koModule, decorator(newValue)));
                 }
                 else {
                     self[koObjectName](decorator(newValue));
@@ -83,10 +83,10 @@ export class ThreadilyKnockoutBridge
      * @param threadilyVector The threadily property to be subscribed to
      * @param threadilyVectorTypeName The type of the threadily property to be subscribed to
      * @param koArrayName The name that the knockout observable will be called
-     * @param koViewModel Optional: The constructor to be called when the value is set to a new object. Should only needed for complex types.
+     * @param koViewModelFactory Optional: The constructor to be called when the value is set to a new object. Should only needed for complex types.
      * @return A knockout subscription
      */
-    public static initAndLinkKnockoutArrayToThreadilyVector(threadilyModule, koModule, self, threadilyVector, threadilyVectorTypeName, koArrayName, koViewModel) {
+    public static initAndLinkKnockoutArrayToThreadilyVector(threadilyModule, koModule, self, threadilyVector, threadilyVectorTypeName, koArrayName, koViewModelFactory) {
         var requiredArguments = ["threadilyModule", "koModule", "self", "threadilyVector", "threadilyVectorTypeName", "koArrayName"];
         for (var i = 0; i < requiredArguments.length; i++) {
             if (arguments[i] == null) {
@@ -107,8 +107,8 @@ export class ThreadilyKnockoutBridge
                 iObject = iObject.clone();
                 self[koArrayName + "ThreadObjects"].push(iObject);
             }
-            if (koViewModel != null) {
-                koArray.push(new koViewModel(threadilyModule, koModule, iObject));
+            if (koViewModelFactory != null) {
+                koArray.push(koViewModelFactory(threadilyModule, koModule, iObject));
             }
             else {
                 koArray.push(iObject);
@@ -127,8 +127,8 @@ export class ThreadilyKnockoutBridge
                     if (value.getThreadId != null) {
                         self[koArrayName + "ThreadObjects"].splice(index, 0, value);
                     }
-                    if (koViewModel != null) {
-                        koArray.splice(index, 0, new koViewModel(threadilyModule, koModule, value));
+                    if (koViewModelFactory != null) {
+                        koArray.splice(index, 0, koViewModelFactory(threadilyModule, koModule, value));
                     }
                     else {
                         koArray.splice(index, 0, value);
