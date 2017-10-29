@@ -3,3 +3,6 @@ obj/**
 Scripts/**
 Threadily.KnockoutBridge.j*
 Threadily.KnockoutBridge.d.ts
+**/node_modules
+*-lock.json
+*.lock

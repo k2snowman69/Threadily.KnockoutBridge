@@ -1,11 +1,22 @@
 ﻿{
   "compilerOptions": {
-    "module": "amd",
-    "target": "ES6",
+    "outDir": "./lib/",
+    "sourceMap": true,
+    "target": "es5",
+    "module": "umd",
+    "moduleResolution": "node",
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": false,
-    "declaration": true
+    "removeComments": true
   },
-  "files": [
-    "threadily.knockoutBridge.ts"
+  "include": [
+    "Threadily.KnockoutBridge.ts"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "node_modules"
   ]
 }
